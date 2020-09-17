@@ -1,0 +1,48 @@
+﻿@page "/"
+@using System.Net.Http; 
+@using QuoteGeneration.Models; 
+@inject HttpClient http;
+
+<div id="app" style="display: flex; align-items: center;">
+    @if (!(CurrentQuote == null))
+    {
+        <div id="app-wrap">
+            <h1 class="title">Random Quote Generator</h1>
+
+            <div id="quote-box">
+                <div class="quote-author">
+                    <div id="quote">
+                        <p>@(CurrentQuote.content)</p>
+                    </div>
+                    <div id="author">
+                        <h5>@(CurrentQuote.author)</h5>
+                    </div>
+                </div>
+            </div>
+            <button title="New Quote" class="btn btn-primary" @onclick="GetQuote">
+                <span>New</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <h1>Loading quote...</h1>
+    }
+
+</div>
+
+@code 
+{
+    private Quote CurrentQuote { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetQuote();
+    }
+
+    private async Task GetQuote()
+    {
+        string api_call = "https://api.quotable.io/random";
+        CurrentQuote = await http.GetFromJsonAsync<Quote>(api_call);
+    }
+}
